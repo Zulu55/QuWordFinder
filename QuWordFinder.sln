@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuWordFinder.Services", "QuWordFinder.Services\QuWordFinder.Services.csproj", "{90CA35D5-4C7D-4FAD-8AD4-3551B13B0250}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuWordFinder.ConsoleApp", "QuWordFinder.ConsoleApp\QuWordFinder.ConsoleApp.csproj", "{A3A4D35B-F577-423A-B608-E3969C25936B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90CA35D5-4C7D-4FAD-8AD4-3551B13B0250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90CA35D5-4C7D-4FAD-8AD4-3551B13B0250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90CA35D5-4C7D-4FAD-8AD4-3551B13B0250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90CA35D5-4C7D-4FAD-8AD4-3551B13B0250}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3A4D35B-F577-423A-B608-E3969C25936B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A4D35B-F577-423A-B608-E3969C25936B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3A4D35B-F577-423A-B608-E3969C25936B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3A4D35B-F577-423A-B608-E3969C25936B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7599600B-4AFE-4B58-AE09-082F75A3987A}
+	EndGlobalSection
+EndGlobal
