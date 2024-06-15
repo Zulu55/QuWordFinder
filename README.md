@@ -2,4 +2,6 @@
 
 Just run the **QuWordFinder.ConsoleApp**:
 
-![QuTest](https://github.com/Zulu55/QuWordFinder/assets/12401602/b1be76f7-4a8f-4daa-9e60-f6551aa44db2)
+This new version fixes a word count bug and makes significant performance improvements.
+
+![QuTest](https://github.com/Zulu55/QuWordFinder/assets/12401602/98fe89df-428c-49c0-92c7-bc8f2467b31c)
