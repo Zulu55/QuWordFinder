@@ -1,104 +1,104 @@
-﻿namespace QuWordFinder.Services;
+﻿using System.Collections.Concurrent;
 
-public class WordFinder : IWordFinder
+namespace QuWordFinder.Services
 {
-    private readonly char[][] _matrix;
-    private readonly int _rows;
-    private readonly int _cols;
-
-    public WordFinder(IEnumerable<string> matrix)
+    public class WordFinder : IWordFinder
     {
-        if (matrix == null || !matrix.Any())
+        private readonly char[][] _matrix;
+        private readonly int _rows;
+        private readonly int _cols;
+
+        public WordFinder(IEnumerable<string> matrix)
         {
-            throw new ArgumentException("Matrix cannot be null or empty");
-        }
-
-        _matrix = matrix.Select(row => row.ToCharArray()).ToArray();
-        _rows = _matrix.Length;
-        _cols = _matrix[0].Length;
-    }
-
-    public IEnumerable<string> Find(IEnumerable<string> wordstream)
-    {
-        if (wordstream == null || !wordstream.Any())
-        {
-            return [];
-        }
-
-        var wordSet = new HashSet<string>(wordstream);
-        var wordCount = new Dictionary<string, int>();
-
-        foreach (var word in wordSet)
-        {
-            if (ExistsInMatrix(word))
+            if (matrix == null || !matrix.Any())
             {
-                if (wordCount.TryGetValue(word, out int value))
+                throw new ArgumentException("Matrix cannot be null or empty.");
+            }
+
+            _matrix = matrix.Select(row => row.ToCharArray()).ToArray();
+            _rows = _matrix.Length;
+            _cols = _matrix[0].Length;
+
+            if (_rows > 64 || _cols > 64)
+            {
+                throw new ArgumentException("The matrix cannot have more than 64 rows or more than 64 columns.");
+            }
+        }
+
+        public IEnumerable<string> Find(IEnumerable<string> wordstream)
+        {
+            if (wordstream == null || !wordstream.Any())
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var wordSet = new HashSet<string>(wordstream);
+            var wordCount = new ConcurrentDictionary<string, int>();
+
+            Parallel.ForEach(wordSet, word =>
+            {
+                wordCount[word] = ExistsInMatrix(word);
+            });
+
+            return wordCount.OrderByDescending(wc => wc.Value)
+                            .ThenBy(wc => wc.Key)
+                            .Where(wc => wc.Value > 0)
+                            .Take(10)
+                            .Select(wc => wc.Key);
+        }
+
+        private int ExistsInMatrix(string word)
+        {
+            int len = word.Length;
+            int count = 0;
+
+            Parallel.For(0, _rows, r =>
+            {
+                for (int c = 0; c <= _cols - len; c++)
                 {
-                    wordCount[word] = ++value;
+                    if (IsHorizontalMatch(r, c, word))
+                    {
+                        Interlocked.Increment(ref count);
+                    }
                 }
-                else
+            });
+
+            Parallel.For(0, _cols, c =>
+            {
+                for (int r = 0; r <= _rows - len; r++)
                 {
-                    wordCount[word] = 1;
+                    if (IsVerticalMatch(r, c, word))
+                    {
+                        Interlocked.Increment(ref count);
+                    }
                 }
-            }
+            });
+
+            return count;
         }
 
-        return wordCount.OrderByDescending(wc => wc.Value)
-                        .ThenBy(wc => wc.Key)
-                        .Take(10)
-                        .Select(wc => wc.Key);
-    }
-
-    private bool ExistsInMatrix(string word)
-    {
-        int len = word.Length;
-
-        for (int r = 0; r < _rows; r++)
+        private bool IsHorizontalMatch(int r, int c, string word)
         {
-            for (int c = 0; c <= _cols - len; c++)
+            for (int i = 0; i < word.Length; i++)
             {
-                if (IsHorizontalMatch(r, c, word))
+                if (_matrix[r][c + i] != word[i])
                 {
-                    return true;
+                    return false;
                 }
             }
+            return true;
         }
 
-        for (int c = 0; c < _cols; c++)
+        private bool IsVerticalMatch(int r, int c, string word)
         {
-            for (int r = 0; r <= _rows - len; r++)
+            for (int i = 0; i < word.Length; i++)
             {
-                if (IsVerticalMatch(r, c, word))
+                if (_matrix[r + i][c] != word[i])
                 {
-                    return true;
+                    return false;
                 }
             }
+            return true;
         }
-
-        return false;
-    }
-
-    private bool IsHorizontalMatch(int r, int c, string word)
-    {
-        for (int i = 0; i < word.Length; i++)
-        {
-            if (_matrix[r][c + i] != word[i])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private bool IsVerticalMatch(int r, int c, string word)
-    {
-        for (int i = 0; i < word.Length; i++)
-        {
-            if (_matrix[r + i][c] != word[i])
-            {
-                return false;
-            }
-        }
-        return true;
     }
 }
